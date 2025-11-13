@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,9 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { Download, Loader2, Image as ImageIcon, FileText, Trash2 } from 'lucide-react';
-import { exportToPDF, exportToPNG } from '../.@/api/functions/exportUtils';
+import {  Loader2, Image as ImageIcon, FileText, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import {exportToPDF, exportToPNG} from "@/api/functions/exportUtils.js";
 
 export default function SettingsSidebar({
   gridSize,
