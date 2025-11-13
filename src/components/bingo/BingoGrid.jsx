@@ -19,8 +19,9 @@ export default function BingoGrid({
   onCellClick
 }) {
   return (
-    <Card className="p-6 lg:p-8 shadow-2xl" id="bingo-card-export">
+    <Card className="p-6 lg:p-8 shadow-2xl" >
       {/* Title */}
+        <div id="bingo-card-export">
       {title && (
         <div className="text-center mb-6">
           <h2 
@@ -111,6 +112,7 @@ export default function BingoGrid({
       <div className="mt-6 text-center text-sm text-gray-500">
         Click any cell to edit • {cells.filter(c => c.text || c.image).length} of {cells.length} cells filled
       </div>
+     </div>
     </Card>
   );
 }
