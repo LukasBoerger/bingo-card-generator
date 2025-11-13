@@ -22,18 +22,17 @@ export default function BingoGenerator() {
   const [cells, setCells] = useState([]);
   const [editingCell, setEditingCell] = useState(null);
 
-  // Helper function to create a clean cell with proper structure
+  // Helper: leere Zelle
   const createEmptyCell = (id) => ({
     id,
     text: '',
     image: null,
-    textSize: null,           // null means use global
-    textBold: null,           // null means use global
-    backgroundColor: null,    // null means use global
+    textSize: null,
+    textBold: null,
+    backgroundColor: null,
     imageFit: 'fit',
   });
 
-  // Helper function to normalize/migrate cell data
   const normalizeCell = (cell, id) => {
     return {
       id: id !== undefined ? id : cell.id,
@@ -46,7 +45,7 @@ export default function BingoGenerator() {
     };
   };
 
-  // Initialize cells when grid size changes
+  // Zellen initialisieren bei gridSize-Änderung
   useEffect(() => {
     const totalCells = gridSize * gridSize;
     const newCells = Array(totalCells)
@@ -55,7 +54,7 @@ export default function BingoGenerator() {
     setCells(newCells);
   }, [gridSize]);
 
-  // Load from localStorage on mount
+  // Laden aus localStorage
   useEffect(() => {
     const saved = localStorage.getItem('bingoCardData');
     if (saved) {
@@ -64,21 +63,16 @@ export default function BingoGenerator() {
         setGridSize(data.gridSize || 5);
         setTitle(data.title || '');
         setTitleSize(data.titleSize || 32);
-        setTitleBold(
-            data.titleBold !== undefined ? data.titleBold : true
-        );
+        setTitleBold(data.titleBold !== undefined ? data.titleBold : true);
         setFontFamily(data.fontFamily || 'Arial');
         setTextColor(data.textColor || '#000000');
         setTextSize(data.textSize || 16);
         setTextBold(data.textBold || false);
         setBackgroundColor(data.backgroundColor || '#ffffff');
-        setShowGridLines(
-            data.showGridLines !== undefined ? data.showGridLines : true
-        );
+        setShowGridLines(data.showGridLines !== undefined ? data.showGridLines : true);
         setGridLineThickness(data.gridLineThickness || 2);
         setGridLineColor(data.gridLineColor || '#333333');
 
-        // Normalize loaded cells to ensure they have all properties
         if (data.cells && Array.isArray(data.cells)) {
           const normalizedCells = data.cells.map((cell, idx) =>
               normalizeCell(cell, idx)
@@ -91,7 +85,7 @@ export default function BingoGenerator() {
     }
   }, []);
 
-  // Save to localStorage whenever state changes
+  // Speichern in localStorage
   useEffect(() => {
     const data = {
       gridSize,
@@ -134,11 +128,7 @@ export default function BingoGenerator() {
   };
 
   const clearCard = () => {
-    if (
-        window.confirm(
-            'Are you sure you want to clear all cells? This will remove all content and reset cells to use global settings.'
-        )
-    ) {
+    if (window.confirm('Are you sure you want to clear all cells? This will remove all content and reset cells to use global settings.')) {
       setCells((prev) =>
           prev.map((cell) => createEmptyCell(cell.id))
       );
@@ -152,6 +142,10 @@ export default function BingoGenerator() {
   const closeCellEditor = () => {
     setEditingCell(null);
   };
+
+  // Breite für Export-Ansicht
+  const exportWidth =
+      gridSize === 3 ? 500 : gridSize === 4 ? 650 : 800;
 
   return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -265,6 +259,8 @@ export default function BingoGenerator() {
               left: '-99999px',
               top: 0,
               backgroundColor: '#ffffff',
+              width: `${exportWidth + 48}px`, // Grid-Breite + etwas Padding
+              padding: '24px',
             }}
         >
           <BingoGrid
