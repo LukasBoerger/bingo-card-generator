@@ -27,10 +27,10 @@ export default function BingoGenerator() {
     id,
     text: '',
     image: null,
-    textSize: null,      // null means use global
-    textBold: null,      // null means use global
-    backgroundColor: null, // null means use global
-    imageFit: 'fit'
+    textSize: null,           // null means use global
+    textBold: null,           // null means use global
+    backgroundColor: null,    // null means use global
+    imageFit: 'fit',
   });
 
   // Helper function to normalize/migrate cell data
@@ -42,14 +42,16 @@ export default function BingoGenerator() {
       textSize: cell.textSize !== undefined ? cell.textSize : null,
       textBold: cell.textBold !== undefined ? cell.textBold : null,
       backgroundColor: cell.backgroundColor !== undefined ? cell.backgroundColor : null,
-      imageFit: cell.imageFit || 'fit'
+      imageFit: cell.imageFit || 'fit',
     };
   };
 
   // Initialize cells when grid size changes
   useEffect(() => {
     const totalCells = gridSize * gridSize;
-    const newCells = Array(totalCells).fill(null).map((_, idx) => createEmptyCell(idx));
+    const newCells = Array(totalCells)
+        .fill(null)
+        .map((_, idx) => createEmptyCell(idx));
     setCells(newCells);
   }, [gridSize]);
 
@@ -62,23 +64,29 @@ export default function BingoGenerator() {
         setGridSize(data.gridSize || 5);
         setTitle(data.title || '');
         setTitleSize(data.titleSize || 32);
-        setTitleBold(data.titleBold !== undefined ? data.titleBold : true);
+        setTitleBold(
+            data.titleBold !== undefined ? data.titleBold : true
+        );
         setFontFamily(data.fontFamily || 'Arial');
         setTextColor(data.textColor || '#000000');
         setTextSize(data.textSize || 16);
         setTextBold(data.textBold || false);
         setBackgroundColor(data.backgroundColor || '#ffffff');
-        setShowGridLines(data.showGridLines !== undefined ? data.showGridLines : true);
+        setShowGridLines(
+            data.showGridLines !== undefined ? data.showGridLines : true
+        );
         setGridLineThickness(data.gridLineThickness || 2);
         setGridLineColor(data.gridLineColor || '#333333');
-        
+
         // Normalize loaded cells to ensure they have all properties
         if (data.cells && Array.isArray(data.cells)) {
-          const normalizedCells = data.cells.map((cell, idx) => normalizeCell(cell, idx));
+          const normalizedCells = data.cells.map((cell, idx) =>
+              normalizeCell(cell, idx)
+          );
           setCells(normalizedCells);
         }
       } catch (e) {
-        console.error('Failed to load saved data');
+        console.error('Failed to load saved data', e);
       }
     }
   }, []);
@@ -98,21 +106,42 @@ export default function BingoGenerator() {
       showGridLines,
       gridLineThickness,
       gridLineColor,
-      cells
+      cells,
     };
     localStorage.setItem('bingoCardData', JSON.stringify(data));
-  }, [gridSize, title, titleSize, titleBold, fontFamily, textColor, textSize, textBold, backgroundColor, showGridLines, gridLineThickness, gridLineColor, cells]);
+  }, [
+    gridSize,
+    title,
+    titleSize,
+    titleBold,
+    fontFamily,
+    textColor,
+    textSize,
+    textBold,
+    backgroundColor,
+    showGridLines,
+    gridLineThickness,
+    gridLineColor,
+    cells,
+  ]);
 
   const updateCell = (cellId, updates) => {
-    setCells(prev => prev.map(cell => 
-      cell.id === cellId ? { ...cell, ...updates } : cell
-    ));
+    setCells((prev) =>
+        prev.map((cell) =>
+            cell.id === cellId ? { ...cell, ...updates } : cell
+        )
+    );
   };
 
   const clearCard = () => {
-    if (window.confirm('Are you sure you want to clear all cells? This will remove all content and reset cells to use global settings.')) {
-      // Reset all cells to empty state with no overrides
-      setCells(prev => prev.map(cell => createEmptyCell(cell.id)));
+    if (
+        window.confirm(
+            'Are you sure you want to clear all cells? This will remove all content and reset cells to use global settings.'
+        )
+    ) {
+      setCells((prev) =>
+          prev.map((cell) => createEmptyCell(cell.id))
+      );
     }
   };
 
@@ -125,120 +154,152 @@ export default function BingoGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Bingo Generator
-          </h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        {/* Mobile Header */}
+        <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Bingo Generator
+            </h1>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="flex lg:pt-0 pt-16">
-        {/* Settings Sidebar */}
-        <div className={`
+        <div className="flex lg:pt-0 pt-16">
+          {/* Settings Sidebar */}
+          <div
+              className={`
           fixed lg:static inset-y-0 left-0 z-40 lg:z-0
           w-80 bg-white border-r border-gray-200 
           transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           overflow-y-auto
-        `}>
-          <SettingsSidebar
-            gridSize={gridSize}
-            setGridSize={setGridSize}
-            title={title}
-            setTitle={setTitle}
-            titleSize={titleSize}
-            setTitleSize={setTitleSize}
-            titleBold={titleBold}
-            setTitleBold={setTitleBold}
-            fontFamily={fontFamily}
-            setFontFamily={setFontFamily}
-            textColor={textColor}
-            setTextColor={setTextColor}
-            textSize={textSize}
-            setTextSize={setTextSize}
-            textBold={textBold}
-            setTextBold={setTextBold}
-            backgroundColor={backgroundColor}
-            setBackgroundColor={setBackgroundColor}
-            showGridLines={showGridLines}
-            setShowGridLines={setShowGridLines}
-            gridLineThickness={gridLineThickness}
-            setGridLineThickness={setGridLineThickness}
-            gridLineColor={gridLineColor}
-            setGridLineColor={setGridLineColor}
-            cells={cells}
-            onClearCard={clearCard}
-          />
-        </div>
+        `}
+          >
+            <SettingsSidebar
+                gridSize={gridSize}
+                setGridSize={setGridSize}
+                title={title}
+                setTitle={setTitle}
+                titleSize={titleSize}
+                setTitleSize={setTitleSize}
+                titleBold={titleBold}
+                setTitleBold={setTitleBold}
+                fontFamily={fontFamily}
+                setFontFamily={setFontFamily}
+                textColor={textColor}
+                setTextColor={setTextColor}
+                textSize={textSize}
+                setTextSize={setTextSize}
+                textBold={textBold}
+                setTextBold={setTextBold}
+                backgroundColor={backgroundColor}
+                setBackgroundColor={setBackgroundColor}
+                showGridLines={showGridLines}
+                setShowGridLines={setShowGridLines}
+                gridLineThickness={gridLineThickness}
+                setGridLineThickness={setGridLineThickness}
+                gridLineColor={gridLineColor}
+                setGridLineColor={setGridLineColor}
+                cells={cells}
+                onClearCard={clearCard}
+            />
+          </div>
 
-        {/* Overlay for mobile */}
-        {sidebarOpen && (
-          <div 
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Main Content */}
-        <div className="flex-1 p-4 lg:p-8 overflow-auto">
-          <div className="max-w-5xl mx-auto">
-            {/* Desktop Header */}
-            <div className="hidden lg:block mb-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                Bingo Card Generator
-              </h1>
-              <p className="text-gray-600">
-                Create custom bingo cards with images and text • 100% client-side • No uploads required
-              </p>
-            </div>
-
-            {/* Bingo Grid */}
-            <div id="bingo-card">
-              <BingoGrid
-                  gridSize={gridSize}
-                  title={title}
-                  titleSize={titleSize}
-                  titleBold={titleBold}
-                  cells={cells}
-                  fontFamily={fontFamily}
-                  textColor={textColor}
-                  textSize={textSize}
-                  textBold={textBold}
-                  backgroundColor={backgroundColor}
-                  showGridLines={showGridLines}
-                  gridLineThickness={gridLineThickness}
-                  gridLineColor={gridLineColor}
-                  onCellClick={openCellEditor}
+          {/* Overlay for mobile */}
+          {sidebarOpen && (
+              <div
+                  className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+                  onClick={() => setSidebarOpen(false)}
               />
+          )}
+
+          {/* Main Content */}
+          <div className="flex-1 p-4 lg:p-8 overflow-auto">
+            <div className="max-w-5xl mx-auto">
+              {/* Desktop Header */}
+              <div className="hidden lg:block mb-8">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  Bingo Card Generator
+                </h1>
+                <p className="text-gray-600">
+                  Create custom bingo cards with images and text • 100% client-side • No uploads required
+                </p>
+              </div>
+
+              {/* Sichtbare Karte */}
+              <div id="bingo-card-visible">
+                <BingoGrid
+                    gridSize={gridSize}
+                    title={title}
+                    titleSize={titleSize}
+                    titleBold={titleBold}
+                    cells={cells}
+                    fontFamily={fontFamily}
+                    textColor={textColor}
+                    textSize={textSize}
+                    textBold={textBold}
+                    backgroundColor={backgroundColor}
+                    showGridLines={showGridLines}
+                    gridLineThickness={gridLineThickness}
+                    gridLineColor={gridLineColor}
+                    onCellClick={openCellEditor}
+                    exportMode={false}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Cell Editor Modal */}
-      {editingCell !== null && (
-        <CellEditorModal
-          cell={cells.find(c => c.id === editingCell)}
-          globalTextSize={textSize}
-          globalTextBold={textBold}
-          globalBackgroundColor={backgroundColor}
-          onClose={closeCellEditor}
-          onSave={(updates) => {
-            updateCell(editingCell, updates);
-            closeCellEditor();
-          }}
-        />
-      )}
-    </div>
+        {/* Unsichtbare Export-Version */}
+        <div
+            id="bingo-card-export"
+            style={{
+              position: 'absolute',
+              left: '-99999px',
+              top: 0,
+              backgroundColor: '#ffffff',
+            }}
+        >
+          <BingoGrid
+              gridSize={gridSize}
+              title={title}
+              titleSize={titleSize}
+              titleBold={titleBold}
+              cells={cells}
+              fontFamily={fontFamily}
+              textColor={textColor}
+              textSize={textSize}
+              textBold={textBold}
+              backgroundColor={backgroundColor}
+              showGridLines={showGridLines}
+              gridLineThickness={gridLineThickness}
+              gridLineColor={gridLineColor}
+              onCellClick={() => {}}
+              exportMode={true}
+          />
+        </div>
+
+        {/* Cell Editor Modal */}
+        {editingCell !== null && (
+            <CellEditorModal
+                cell={cells.find((c) => c.id === editingCell)}
+                globalTextSize={textSize}
+                globalTextBold={textBold}
+                globalBackgroundColor={backgroundColor}
+                onClose={closeCellEditor}
+                onSave={(updates) => {
+                  updateCell(editingCell, updates);
+                  closeCellEditor();
+                }}
+            />
+        )}
+      </div>
   );
 }
