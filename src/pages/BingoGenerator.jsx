@@ -203,22 +203,24 @@ export default function BingoGenerator() {
             </div>
 
             {/* Bingo Grid */}
-            <BingoGrid
-              gridSize={gridSize}
-              title={title}
-              titleSize={titleSize}
-              titleBold={titleBold}
-              cells={cells}
-              fontFamily={fontFamily}
-              textColor={textColor}
-              textSize={textSize}
-              textBold={textBold}
-              backgroundColor={backgroundColor}
-              showGridLines={showGridLines}
-              gridLineThickness={gridLineThickness}
-              gridLineColor={gridLineColor}
-              onCellClick={openCellEditor}
-            />
+            <div id="bingo-card">
+              <BingoGrid
+                  gridSize={gridSize}
+                  title={title}
+                  titleSize={titleSize}
+                  titleBold={titleBold}
+                  cells={cells}
+                  fontFamily={fontFamily}
+                  textColor={textColor}
+                  textSize={textSize}
+                  textBold={textBold}
+                  backgroundColor={backgroundColor}
+                  showGridLines={showGridLines}
+                  gridLineThickness={gridLineThickness}
+                  gridLineColor={gridLineColor}
+                  onCellClick={openCellEditor}
+              />
+            </div>
           </div>
         </div>
       </div>
